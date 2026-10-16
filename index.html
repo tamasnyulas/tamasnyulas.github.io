@@ -1,0 +1,1787 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mars Expedíció</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#04050a;--surf:#080c14;--surf2:#0c1020;
+  --border:#18202e;--border2:#222d40;
+  --text:#d0e4f8;--sub:#4e6880;--dim:#2a3a4a;
+  --orange:#e06820;--orange-bg:rgba(224,104,32,.10);
+  --green:#00cc6a;--green-bg:rgba(0,204,106,.08);
+  --aura:#20a0c8;--aura-bg:rgba(32,160,200,.09);
+  --red:#e02828;--red-bg:rgba(224,40,40,.09);
+  --gold:#e0b830;--gold-bg:rgba(224,184,48,.10);
+  --purple:#7744cc;--purple-bg:rgba(119,68,204,.09);
+  --blue:#3a7acc;--blue-bg:rgba(58,122,204,.09);
+  --fd:'Orbitron',sans-serif;
+  --fh:'Rajdhani','Arial Narrow',sans-serif;
+  --fb:'IBM Plex Sans',system-ui,sans-serif;
+  --fm:'IBM Plex Mono','Courier New',monospace;
+  --r:6px;--rl:10px;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--fb)}
+
+/* atmosphere */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-2;
+  background:
+    radial-gradient(ellipse at 50% 108%,rgba(200,55,10,.20) 0%,transparent 52%),
+    radial-gradient(ellipse at 85% -8%,rgba(25,45,110,.14) 0%,transparent 45%),
+    radial-gradient(1px 1px at 7% 15%,rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 21% 68%,rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 39% 8%,rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 56% 82%,rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 72% 41%,rgba(255,255,255,.50) 0%,transparent 100%),
+    radial-gradient(1px 1px at 88% 10%,rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 13% 90%,rgba(255,255,255,.40) 0%,transparent 100%),
+    radial-gradient(1px 1px at 50% 55%,rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(2px 2px at 76% 64%,rgba(255,255,255,.30) 0%,transparent 100%),
+    radial-gradient(1px 1px at 31% 30%,rgba(255,255,255,.50) 0%,transparent 100%),
+    radial-gradient(1px 1px at 65% 22%,rgba(255,255,255,.40) 0%,transparent 100%),
+    radial-gradient(1px 1px at 3%  48%,rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 94% 76%,rgba(255,255,255,.35) 0%,transparent 100%)}
+
+/* scenes */
+.scene{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2.5rem 4rem;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .4s ease;
+  overflow-y:auto;
+}
+.scene.active{opacity:1;visibility:visible;pointer-events:all}
+.scene-inner{width:100%;max-width:1300px}
+
+/* typography */
+h1{font-family:var(--fd);font-size:clamp(52px,7vw,100px);font-weight:900;letter-spacing:.06em;text-transform:uppercase;line-height:1.0;color:var(--text)}
+h2{font-family:var(--fd);font-size:clamp(26px,3.2vw,44px);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text);margin-bottom:.5rem}
+h3{font-family:var(--fh);font-size:clamp(22px,2.5vw,34px);font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text)}
+p{font-size:clamp(18px,1.8vw,22px);line-height:1.7;color:var(--sub)}
+p.lead{font-size:clamp(20px,2.2vw,26px);color:var(--text);line-height:1.6}
+strong{color:var(--text)}
+
+/* AURA block */
+.aura-b{
+  background:var(--aura-bg);
+  border:1px solid rgba(32,160,200,.18);border-left:3px solid var(--aura);
+  border-radius:var(--r);padding:1.1rem 1.4rem;margin:.8rem 0;
+  position:relative;overflow:hidden;text-align:left;
+}
+.aura-b::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
+.aura-lbl{font-family:var(--fm);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--aura);opacity:.7;margin-bottom:.4rem}
+.aura-t{font-family:var(--fm);font-size:clamp(17px,1.8vw,21px);color:#80d0f0;line-height:1.8;position:relative;z-index:1;min-height:1.8em}
+.fill-blank{display:inline-block;min-width:2.5em;border-bottom:1px solid currentColor;vertical-align:bottom}
+.aura-li{padding-left:1.2em}
+.aura-num{display:inline-block;min-width:2.4em}
+
+/* info block (facilitator notes, shown immediately) */
+.info-b{background:rgba(224,104,32,.07);border:1px solid rgba(224,104,32,.18);border-left:3px solid var(--orange);border-radius:var(--r);padding:1rem 1.3rem;margin:.8rem 0}
+.info-t{font-size:clamp(17px,1.8vw,21px);color:#e0b080;line-height:1.7}
+
+/* buttons */
+.btn{font-family:var(--fh);font-size:clamp(18px,2vw,24px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.55em 1.6em;border-radius:var(--r);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.5em;transition:filter .15s,transform .1s}
+.btn:hover{filter:brightness(1.18);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-orange{background:var(--orange);color:#0a0400}
+.btn-green{background:var(--green);color:#020a06}
+.btn-red{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;color:var(--orange);border:1px solid rgba(224,104,32,.35)}
+
+/* inputs */
+.inp{font-family:var(--fm);font-size:clamp(20px,2.5vw,30px);font-weight:500;letter-spacing:.1em;text-transform:uppercase;background:var(--surf2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);padding:.45em .8em;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--orange)}
+.inp.ok{border-color:var(--green)!important;background:var(--green-bg)}
+.inp.err{border-color:var(--red)!important;background:var(--red-bg)}
+.inp-lbl{font-family:var(--fm);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:.4rem;display:block}
+
+/* feedback */
+.fb{margin-top:.6rem;padding:.6rem 1rem;border-radius:var(--r);font-family:var(--fm);font-size:clamp(15px,1.6vw,18px);line-height:1.5;display:none}
+.fb.show{display:block}
+.fb.e{background:var(--red-bg);border-left:3px solid var(--red);color:#f09090}
+.fb.o{background:var(--green-bg);border-left:3px solid var(--green);color:#80f0c0}
+
+/* nav hint - small, global fixed */
+#nav-hint{position:fixed;bottom:1.1rem;left:50%;transform:translateX(-50%);display:flex;gap:1.8rem;font-family:var(--fm);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);pointer-events:none;transition:opacity .3s;white-space:nowrap}
+#nav-hint .k{background:var(--surf2);border:1px solid var(--border);border-radius:3px;padding:.1em .45em;margin-right:.2em;color:var(--sub);font-size:11px}
+
+/* ── S01 ────────────────────────────────────── */
+#s01{justify-content:center;text-align:center}
+.title-eyebrow{font-family:var(--fm);font-size:14px;letter-spacing:.25em;text-transform:uppercase;color:var(--sub);margin-bottom:1.2rem;display:flex;align-items:center;justify-content:center;gap:.8rem}
+.title-eyebrow::before,.title-eyebrow::after{content:'';width:40px;height:1px;background:var(--dim)}
+.title-sub{font-family:var(--fm);font-size:clamp(13px,1.4vw,16px);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-top:1.4rem}
+.cursor-blink{display:inline-block;width:2px;height:1.1em;background:var(--green);vertical-align:middle;margin-left:2px;animation:cblink 1s step-end infinite}
+@keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── ROLE ASSIGNMENT (S03) ──────────────────── */
+#s03{padding:1.5rem 1rem;justify-content:flex-start;overflow:hidden}
+.rass-wrap{display:flex;flex-direction:column;height:100%;gap:.7rem;width:100%}
+.rass-photos{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;flex:1;min-height:0}
+.rass-card{display:flex;flex-direction:column;border-radius:var(--rl);border:2px solid transparent;transition:border-color .25s,box-shadow .25s,transform .2s;overflow:hidden;cursor:default;position:relative}
+.rass-card.sel{border-color:var(--orange);box-shadow:0 0 24px rgba(224,104,32,.35);transform:translateY(-4px)}
+.rass-photo{flex:1;min-height:0;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;transition:filter .5s ease}
+.rass-photo.grey{filter:grayscale(1) brightness(.55) contrast(1.1)}
+/* per-person photo backgrounds */
+.ph-0{background:linear-gradient(165deg,#0e1f4a,#1a3070)}
+.ph-1{background:linear-gradient(165deg,#0a2818,#184030)}
+.ph-2{background:linear-gradient(165deg,#200c40,#321460)}
+.ph-3{background:linear-gradient(165deg,#381500,#542200)}
+.ph-4{background:linear-gradient(165deg,#280830,#3c1248)}
+.ph-5{background:linear-gradient(165deg,#082038,#0e3050)}
+.ph-6{background:linear-gradient(165deg,#1e1800,#302600)}
+/* actual crew photo */
+.rass-photo img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;transition:filter .5s ease}
+.rass-info{padding:.4rem .5rem;background:rgba(0,0,0,.55);text-align:center;flex-shrink:0}
+.rass-name{font-family:var(--fh);font-size:clamp(14px,1.6vw,20px);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text)}
+.rass-role-tag{font-family:var(--fm);font-size:clamp(10px,1vw,13px);color:var(--green);letter-spacing:.05em;min-height:1.4em;line-height:1.4;margin-top:.1rem;visibility:hidden}
+.rass-card.done .rass-role-tag{visibility:visible}
+
+/* role list */
+.rass-roles{flex-shrink:0}
+.rass-roles-lbl{font-family:var(--fm);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:.5rem}
+.rass-role-list{display:grid;grid-template-columns:repeat(7,1fr);gap:.45rem}
+.rass-role-btn{font-family:var(--fh);font-size:clamp(14px,1.5vw,18px);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:.3em .85em;border-radius:var(--r);border:1px solid var(--border2);background:var(--surf2);color:var(--text);display:flex;align-items:center;gap:.4em;transition:opacity .3s,background .2s}
+.rass-role-btn .rn{font-family:var(--fm);font-size:11px;color:var(--orange);opacity:.8}
+.rass-role-btn.taken{opacity:.35;background:transparent}
+.rass-role-btn.taken .rn-who{font-size:10px;color:var(--sub);margin-left:.3em}
+.rass-continue{font-family:var(--fm);font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--green);opacity:0;transition:opacity .4s;text-align:center;padding:.3rem 0}
+
+/* ── LANDING MAP OVERLAY (S05) ──────────────────── */
+#s05{padding:.6rem 1rem 3.4rem}
+#s05 .scene-inner{
+  max-width:none!important;width:100%;height:calc(100vh - 4rem);
+  display:flex;gap:1.2rem;align-items:flex-start;
+}
+.land-map-outer{
+  --msize:calc(100vh - 4rem);
+  width:var(--msize);height:var(--msize);
+  display:grid;
+  grid-template-columns:26px 1fr;
+  grid-template-rows:1fr 26px;
+  flex-shrink:0;
+}
+.land-row-lbl{
+  grid-column:1;grid-row:1;
+  display:grid;grid-template-rows:repeat(8,1fr);
+}
+.land-col-lbl{
+  grid-column:2;grid-row:2;
+  display:grid;grid-template-columns:repeat(8,1fr);
+}
+.land-row-lbl>div,.land-col-lbl>div{
+  font-family:var(--fm);font-size:15px;font-weight:500;color:#7090a8;
+  display:flex;align-items:center;justify-content:center;
+}
+.land-img-cell{
+  grid-column:2;grid-row:1;
+  position:relative;border-radius:3px;overflow:hidden;
+  background:linear-gradient(135deg,#3a1508 0%,#6b2c0a 25%,#5a200a 50%,#2c1005 75%,#180904 100%);
+}
+.land-map-img{display:block;width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.land-cells-grid{
+  position:absolute;inset:0;
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  grid-template-rows:repeat(8,1fr);
+}
+.land-side{
+  flex:1;display:flex;flex-direction:column;gap:.75rem;
+  min-width:300px;height:100%;
+}
+.gc{
+  background:transparent;cursor:pointer;
+  border:1px solid rgba(255,255,255,.30);
+  transition:background .12s;
+}
+.gc:hover{background:rgba(255,255,255,.18);z-index:1}
+.gc.lit{background:rgba(224,104,32,.42)!important;box-shadow:inset 0 0 0 2px var(--orange)!important;z-index:2}
+/* Terminal-style coordinate input */
+.term-line{
+  display:flex;align-items:center;gap:.7rem;
+  font-family:var(--fm);font-size:clamp(20px,2.2vw,26px);
+  background:rgba(0,0,0,.45);border:1px solid rgba(0,204,106,.25);
+  border-radius:var(--r);padding:.5em 1em;cursor:text;
+  transition:opacity .4s,border-color .2s,background .2s;
+}
+.term-line:focus-within{border-color:rgba(0,204,106,.6)}
+.term-line.ok{border-color:rgba(0,204,106,.7)!important;background:rgba(0,204,106,.07)}
+.term-line.err{border-color:rgba(224,40,40,.6)!important;background:rgba(224,40,40,.06)}
+.term-line.term-waiting{opacity:0;pointer-events:none}
+.term-prompt{color:var(--aura);opacity:.75;letter-spacing:.06em;white-space:nowrap}
+.term-inp{
+  background:transparent;border:none;outline:none;
+  color:var(--green);font-family:var(--fm);font-size:inherit;
+  font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  width:3ch;caret-color:var(--green);
+}
+
+/* ── COUNTDOWN ──────────────────────────────── */
+.cd-bar{display:flex;align-items:center;gap:1.2rem;padding:.7rem 1.4rem;background:var(--red-bg);border:1px solid rgba(224,40,40,.3);border-radius:var(--r);margin-bottom:.9rem}
+#cd{font-family:var(--fm);font-size:clamp(30px,4vw,48px);font-weight:500;color:var(--red);letter-spacing:.06em;min-width:5ch}
+.cd-lbl{font-family:var(--fm);font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);flex:1}
+
+/* ── PARALLEL COLS ──────────────────────────── */
+.par-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.par-col{background:var(--surf);border:1px solid var(--border);border-radius:var(--rl);padding:1rem;display:flex;flex-direction:column;gap:.5rem;transition:border-color .3s,background .3s}
+.par-col.done{border-color:rgba(0,204,106,.5);background:var(--green-bg)}
+.par-col-title{font-family:var(--fh);font-size:clamp(18px,2vw,26px);font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--red)}
+.par-col.done .par-col-title{color:var(--green)}
+.par-spec{font-family:var(--fm);font-size:14px;color:var(--sub)}
+.par-icon{font-size:clamp(24px,3vw,40px);text-align:center}
+.par-done-txt{font-family:var(--fm);font-size:clamp(14px,1.5vw,17px);color:var(--green);display:none}
+.par-col.done .par-done-txt{display:block}
+.par-col.done .par-inp-wrap{display:none}
+
+/* ── ACTIVATION CAROUSEL (S14) ──────────────── */
+.act-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin:.7rem 0}
+.act-sep{color:var(--purple);font-size:1.6rem;opacity:.7;align-self:flex-end;padding-bottom:.35rem}
+.act-slot{flex:1;background:var(--surf);border:2px solid var(--border);border-radius:var(--rl);padding:.8rem 1rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.3rem;min-width:0;transition:border-color .2s,background .2s,opacity .2s}
+.act-slot.active{border-color:rgba(119,68,204,.6);background:var(--purple-bg)}
+.act-slot.locked{border-color:rgba(0,204,106,.5);background:var(--green-bg)}
+.act-slot.pending{opacity:.4}
+.act-slot.error{border-color:rgba(224,40,40,.7)!important;background:var(--red-bg)!important}
+.act-slot-num{font-family:var(--fm);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.act-slot-sel{font-family:var(--fm);font-size:11px;color:var(--purple);opacity:0;transition:opacity .15s;margin-top:.1rem}
+.act-slot.active .act-slot-sel{opacity:1}
+.act-slot-icon{font-size:clamp(26px,3vw,40px);line-height:1.1}
+.act-slot-name{font-family:var(--fh);font-size:clamp(14px,1.6vw,20px);font-weight:700;text-transform:uppercase;letter-spacing:.04em;line-height:1.2}
+.act-slot-code{font-family:var(--fm);font-size:clamp(11px,1.2vw,13px);color:var(--sub);line-height:1.4}
+/* ── OLD ACTIVATION (S15 — kept for ref cards) ─ */
+.act-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.act-col{background:var(--surf);border:1px solid var(--border);border-radius:var(--rl);padding:.9rem;text-align:center;display:flex;flex-direction:column;gap:.45rem}
+.act-num{font-family:var(--fm);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.act-sys{font-family:var(--fh);font-size:clamp(18px,2vw,26px);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.act-code{font-family:var(--fm);font-size:clamp(26px,3vw,40px);font-weight:500;color:var(--orange);letter-spacing:.08em}
+
+/* ── ALARM (S11) ────────────────────────────── */
+#s11{background:#060202}
+#s11::after{content:'';position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.18) 3px,rgba(0,0,0,.18) 4px)}
+.alarm-big{font-family:var(--fd);font-size:clamp(36px,7vw,80px);font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--red);animation:ablink .5s ease-in-out infinite;text-align:center;line-height:1.15}
+.alarm-sub{font-family:var(--fm);font-size:clamp(14px,1.8vw,20px);color:#902020;text-align:center;margin-top:.8rem;letter-spacing:.08em;animation:ablink .5s ease-in-out infinite}
+
+/* ── LAUNCH (S17B) ──────────────────────────── */
+#s17b{background:#060202;text-align:center}
+#lnum{font-family:var(--fd);font-size:clamp(80px,18vw,180px);font-weight:900;color:var(--red);line-height:1;animation:lpulse .8s ease-out}
+.launch-lbl{font-family:var(--fm);font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:.8rem}
+
+/* ── MISSION COMPLETE (S18) ─────────────────── */
+#s18{overflow:hidden}
+.conf-layer{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.cp{position:absolute;top:-20px;border-radius:2px;animation:cfall linear infinite}
+#s18 .scene-inner{position:relative;z-index:1;text-align:center}
+.bday-box{font-family:var(--fd);font-size:clamp(20px,3vw,32px);font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:var(--gold);background:var(--gold-bg);border:1px solid rgba(224,184,48,.4);border-radius:var(--rl);padding:.65rem 1.5rem;margin:1rem auto;display:inline-block}
+
+/* ── MISC ───────────────────────────────────── */
+.flex-r{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.flex-c{display:flex;flex-direction:column;gap:.6rem}
+.tc{text-align:center}
+.mt{margin-top:.7rem}
+.mt2{margin-top:1.3rem}
+.mars-ball{width:clamp(100px,14vw,180px);height:clamp(100px,14vw,180px);border-radius:50%;background:radial-gradient(circle at 38% 33%,#b84820,#7a1c08 55%,#480800);box-shadow:0 0 50px rgba(180,55,10,.5);animation:mpulse 3s ease-in-out infinite;flex-shrink:0}
+@keyframes mpulse{0%,100%{box-shadow:0 0 40px rgba(180,55,10,.4)}50%{box-shadow:0 0 80px rgba(180,55,10,.7)}}
+/* Mars entry background */
+#s04{background-image:url('assets/images/Mars-top-view.png');background-size:cover;background-position:center 40%}
+#s04::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,#04050a 0%,#04050a 18%,rgba(4,5,10,.6) 45%,transparent 75%)}
+#s04 .scene-inner{position:relative;z-index:1}
+.symbols-display{text-align:center;padding:1.4rem;background:var(--surf);border:1px solid var(--border2);border-radius:var(--rl);font-size:clamp(28px,4vw,52px);letter-spacing:.18em;color:var(--orange)}
+.sym-lbl{font-family:var(--fm);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-top:.5rem}
+
+/* ── F1 HELP MODAL ──────────────────────────── */
+.f1-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);display:none;
+}
+.f1-box{
+  background:var(--surf);
+  border:1px solid var(--border2);border-top:3px solid var(--aura);
+  border-radius:var(--rl);
+  width:clamp(340px,44vw,640px);max-height:72vh;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.f1-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1.1rem;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.f1-ttl{font-family:var(--fm);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--aura)}
+.f1-esc-key{
+  font-family:var(--fm);font-size:11px;letter-spacing:.1em;
+  color:var(--sub);background:var(--surf2);
+  border:1px solid var(--border);border-radius:3px;padding:.15em .5em;
+}
+.f1-body{
+  padding:1.1rem;overflow-y:auto;flex:1;
+  font-family:var(--fb);font-size:15px;line-height:1.7;color:var(--text);
+}
+.f1-sect-lbl{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sub);margin-bottom:.45rem}
+.f1-hint{color:#a0c8e0;font-size:15px;line-height:1.75;margin-bottom:.6rem}
+.f1-env{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;font-size:14px;color:var(--text);line-height:1.7}
+.f1-sol-val{font-family:var(--fm);font-size:22px;color:var(--green);letter-spacing:.12em;margin-top:.35rem}
+
+/* ── ANIMATIONS ─────────────────────────────── */
+@keyframes ablink{0%,100%{opacity:1}50%{opacity:.28}}
+@keyframes lpulse{0%{transform:scale(1.4);opacity:0}35%{opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@keyframes fader{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- ══ GLOBÁLIS VISSZASZÁMLÁLÁS SÁV (fix, minden jelenetben látható) ══════ -->
+<div id="cd-bar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:999;flex-direction:row;align-items:center;gap:1.2rem;padding:.7rem 1.4rem;background:var(--red-bg);border-bottom:1px solid rgba(224,40,40,.35);margin:0;border-radius:0">
+  <div style="font-family:var(--fm);font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);flex:1">⚠ VÉSZHELYZET · VISSZASZÁMLÁLÁS</div>
+  <div id="cd" style="font-family:var(--fm);font-size:clamp(22px,3vw,34px);font-weight:700;color:var(--red);letter-spacing:.05em">9:59</div>
+</div>
+
+<!-- ══ S01 — INTRO ══════════════════════════ -->
+<section id="s01" class="scene active" data-advance="click">
+  <div class="scene-inner tc">
+    <div class="title-eyebrow">BDAY-9 MISSZIÓ</div>
+    <h1>Mars<br>Expedíció</h1>
+    <div class="title-sub">MISSZIÓ-PARANCSNOKI RENDSZER</div>
+  </div>
+</section>
+
+<!-- ══ S01B — AURA BEMUTATKOZÁS ═════════════ -->
+<section id="s01b" class="scene" data-advance="click">
+  <div class="scene-inner tc">
+    <div class="title-eyebrow">FEDÉLZETI AI RENDSZER — ONLINE</div>
+    <h1 style="font-size:clamp(52px,8vw,110px);letter-spacing:.15em;color:var(--aura)">AURA</h1>
+    <p style="font-family:var(--fm);font-size:clamp(13px,1.3vw,16px);letter-spacing:.18em;text-transform:uppercase;color:var(--sub);margin-bottom:1.6rem">Automatizált Űrhajózási Robot Asszisztens</p>
+    <div class="aura-b" style="text-align:left">
+      <div class="aura-lbl">AURA — Rendszerindítás kész</div>
+      <div class="aura-t">Üdvözlöm a legénységet.<br><br>
+        Én az <strong style="color:#a0dcf8">Automatizált Űrhajózási Robot Asszisztens</strong> vagyok, azaz AURA — az expedíció fedélzeti mesterséges intelligenciája.<br><br>
+        Feladatom a fedélzeti rendszerek koordinálása, a navigáció és életfenntartó adatok figyelése, és a misszió minden fázisában a legénység támogatása.<br><br>
+        A misszió során végig itt leszek és segítek a küldetéseitek során.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S02 — MISSION BRIEFING ══════════════ -->
+<section id="s02" class="scene" data-advance="click">
+  <div class="scene-inner">
+    <h2>Missziós összefoglaló</h2>
+    <div class="aura-b">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">
+        A BDAY-9 misszió három fázisból áll:<br>
+        <div class="aura-li"><span class="aura-num">I.</span>Biztonságos leszállás a Mars bolygón</div>
+        <div class="aura-li"><span class="aura-num">II.</span>Kőzetminta gyűjtés a Mars felszínéről</div>
+        <div class="aura-li"><span class="aura-num">III.</span>Visszatérés a Földre</div>
+        <br>
+        A misszió sikere a legénység együttműködésétől függ.<br>
+        Mindenki különleges feladatot kap.<br><br>
+        Kezdjük a legénység bemutatásával.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S03 — SZEREPKÖR-KIOSZTÁS ═══════════ -->
+<section id="s03" class="scene" data-advance="interactive">
+  <div class="rass-wrap">
+    <div class="rass-photos" id="rass-photos">
+      <!-- rendered by JS -->
+    </div>
+    <div class="rass-roles">
+      <div class="rass-roles-lbl">Válassz szerepkört — nyomj egy számot (1–7):</div>
+      <div class="rass-role-list" id="rass-role-list"></div>
+    </div>
+    <div class="rass-continue" id="rass-continue">ENTER — Misszió megkezdése</div>
+  </div>
+</section>
+
+<!-- ══ S04 — MARS KÖZELEDIK ════════════════ -->
+<section id="s04" class="scene" data-advance="click" style="justify-content:flex-start;padding-top:3rem">
+  <div class="scene-inner tc">
+    <h2>Belépünk a Mars légkörébe</h2>
+    <div class="aura-b" style="text-align:left">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">Figyelem legénység! Felkészülés a landolásra. Belépünk a Mars légkörébe.<br><br>
+        Összes specialista — álljon készen a feladatára!<br><br>
+        A <strong><span data-role="pilot">Pilóta</span></strong> koordinálja a leszállást. Leszállási adatok letöltve.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S05 — LESZÁLLÁSI KOORDINÁTA ════════ -->
+<section id="s05" class="scene" data-advance="interactive">
+  <div class="scene-inner">
+    <!-- Left: Mars térkép koordináta-ráccsal -->
+    <div class="land-map-outer">
+      <div class="land-row-lbl" id="land-row-lbl"></div>
+      <div class="land-img-cell">
+        <img src="assets/images/Mars-landing.png" class="land-map-img" alt="Mars leszállási térkép">
+        <div class="land-cells-grid" id="lgrid"></div>
+      </div>
+      <div class="land-col-lbl" id="land-col-lbl"></div>
+    </div>
+    <!-- Right: AURA + terminál input -->
+    <div class="land-side">
+      <h2>Leszállási zóna</h2>
+      <div class="aura-b">
+        <div class="aura-lbl">AURA</div>
+        <div class="aura-t">Ez itt leszállási zóna légifelvétele.<br>
+          Pilóta, vezesd a csapatot és keressétek meg azt a szektort, ahol biztonságosan leszálhatunk a Marson.<br><br>
+          A biztonságos landoláshoz két feltételnek kell megfelelni:<br>
+          <div class="aura-li">▸ <strong style="color:#a0f0d0">a terep sík</strong></div>
+          <div class="aura-li">▸ <strong style="color:#a0f0d0">a veszélyzónán kívül esik</strong></div>
+          <br>
+          Ha megtaláltátok, add meg a landolási koordinátát!</div>
+      </div>
+      <div class="term-line term-waiting" id="term-line" onclick="document.getElementById('linp').focus()">
+        <span class="term-prompt">AURA></span>
+        <input id="linp" class="term-inp" maxlength="2" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="land-fb" class="fb" style="font-size:clamp(14px,1.4vw,17px)"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S06 — SIKERES LESZÁLLÁS ═════════════ -->
+<section id="s06" class="scene" data-advance="click" style="background:#030a05">
+  <div class="scene-inner tc">
+    <h1 style="color:var(--green);font-size:clamp(48px,7vw,90px)">LESZÁLLÁS<br>SIKERES</h1>
+    <div class="aura-b mt">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">Leszállás végrehajtva.<br><br>
+        Felkészülés a fő tudományos küldetés megkezdésére.<br>
+        Legénység - mindenki készüljön fel a mintavételi misszióra.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S07A — ROBOT ODAÚT ═════════════════ -->
+<section id="s07a" class="scene" data-advance="interactive">
+  <div class="scene-inner">
+    <h2>Robotnavigáció</h2>
+    <div class="aura-b">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">Botley 2.0 mintavételi robot készenáll a küldetésre.<br><br>
+        A <strong>Főgeológus</strong> feladata, hogy elnavigálja a robotot a kőzetmintavételi helyhez!<br>
+        Az egész csapat segíthet a navigálásban.</div>
+    </div>
+    <div style="text-align:center;margin-top:2rem;color:#406050;font-size:clamp(14px,1.6vw,18px)">
+      Nyomj <strong style="color:#00cc6a">ENTER</strong>-t, ha a mintavétel megtörtént.
+    </div>
+  </div>
+</section>
+
+<!-- ══ S07B — KAMERA HIBA ═══════ -->
+<section id="s07b" class="scene" data-advance="click" style="background:#060202">
+  <div class="scene-inner tc">
+    <div class="alarm-big">⚠ KAMERA<br>MEGHIBÁSODÁS</div>
+    <div class="alarm-sub">LÁTHATÓSÁG: NULLA — VÉSZELJÁRÁS AKTIVÁLVA</div>
+  </div>
+</section>
+
+<!-- ══ S07C — ROBOT VISSZAÚT ══════════════ -->
+<section id="s07c" class="scene" data-advance="interactive">
+  <div class="scene-inner">
+    <h2>Robot visszaút</h2>
+    <div class="aura-b">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">A Botley 2.0 kamerája offline — a vezérlőpult képernyője fekete. A Főgeológus nem látja, hol van a robot.<br><br>
+        <strong style="color:#a0f0d0">Csapat: nézzetek ki az ablakon és vezessétek vissza! Mondjátok meg a Főgeológusnak merre navigáljon!</strong><br><br>
+        Főgeológus: programozd be az utasításokat ahogy a csapat diktálja — csak rájuk hagyatkozhatsz.</div>
+    </div>
+    <div style="text-align:center;margin-top:2rem;color:#406050;font-size:clamp(14px,1.6vw,18px)">
+      Nyomj <strong style="color:#00cc6a">ENTER</strong>-t, ha a robot visszaért.
+    </div>
+  </div>
+</section>
+
+<!-- ══ S08 — MINTA BIZTOSÍTVA ═════════════ -->
+<section id="s08" class="scene" data-advance="click" style="background:#030a05">
+  <div class="scene-inner tc">
+    <h2 style="color:var(--green)">Minta biztosítva</h2>
+    <div class="aura-b mt">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">Kőzetminta sikeresen begyűjtve. Tároló lezárva és hőszabályozva.<br>
+        A Botley 2.0 robot biztonságban van az űrhajóban.<br><br>
+        Hazaindulási protokoll megkezdése...<br><br>
+        Figyelem, bejövő üzenet érkezett — üzenet feldolgozása...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S09 — TITKOSÍTOTT INDÍTÁSI PARANCS ════════════════ -->
+<section id="s09" class="scene" data-advance="interactive">
+  <div class="scene-inner">
+    <h2>Titkosított indítási parancs</h2>
+    <div class="aura-b">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">Titkosított indítási parancs érkezett a Földről.<br>
+        Keressétek ki a <strong style="color:#a0f0d0">kódtáblát az archívumból</strong> és fejtsétek meg a szimbólumokat!</div>
+    </div>
+    <div class="symbols-display mt">
+      ▲ ▼ ◆ ○ ■ ★ ✚
+    </div>
+    <div style="max-width:420px;margin-top:1rem">
+      <div class="term-line term-waiting" id="cipher-tl" onclick="document.getElementById('cinp').focus()">
+        <span class="term-prompt">AURA></span>
+        <input id="cinp" class="term-inp" maxlength="7" autocomplete="off" spellcheck="false" style="width:10ch" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div id="cipher-fb" class="fb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S10 — VISSZATÉRÉS... ════════════════ -->
+<section id="s10" class="scene" data-advance="click">
+  <div class="scene-inner tc">
+    <h2>Visszatérési folyamat</h2>
+    <div class="aura-b mt">
+      <div class="aura-lbl">AURA</div>
+      <div class="aura-t">Startjóváhagyás rögzítve.<br><br>
+        Visszatérési folyamat elindítva...<br><br>
+        Felszállási szekvencia betöltése...<br><br>
+        Várakozás a rendszerellenőrzésre...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S11 — KRITIKUS HIBA ══════ -->
+<section id="s11" class="scene" data-advance="click">
+  <div class="scene-inner tc">
+    <div class="alarm-big">⚠ KRITIKUS<br>RENDSZERHIBA<br>ÉSZLELVE ⚠</div>
+    <div class="alarm-sub">VISSZATÉRÉSI FOLYAMAT MEGSZAKÍTVA · VÉSZELJÁRÁS AKTIVÁLVA</div>
+  </div>
+</section>
+
+<!-- ══ S12 — HIBA RÉSZLETEK ════════════════ -->
+<section id="s12" class="scene" data-advance="click" style="background:#080202;padding-top:3.5rem">
+  <div class="scene-inner">
+    <h2 style="color:var(--red)">Kritikus rendszerhiba</h2>
+    <div class="aura-b" style="border-left-color:var(--red);border-color:rgba(224,40,40,.25);background:var(--red-bg)">
+      <div class="aura-lbl" style="color:var(--red)">AURA</div>
+      <div class="aura-t" style="color:#f08080">KRITIKUS HIBA — három rendszer OFFLINE:<br>
+        <div style="display:flex;gap:1.2em;padding-left:1.2em"><span>🔴 Oxigénrendszer</span><span>🔴 Energiarendszer</span><span>🔴 Navigáció</span></div>
+        <br>
+        Azonnali elhárítás szükséges — 10 percen belül végzetes összeomlás fenyeget!<br><br>
+        DÖNTÉS MOST: három csapatban párhuzamosan, vagy közösen?<br><br>
+        Vegyétek elő a használati utasítást az archívumból:<br>
+        <div class="aura-li">📋 Életfenntartó Specialista → Oxigénrendszer</div>
+        <div class="aura-li">📋 Fedélzeti Mérnök → Energiarendszer</div>
+        <div class="aura-li">📋 Navigátor → Navigáció</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S13 — PÁRHUZAMOS MISSZIÓK ══════════ -->
+<section id="s13" class="scene" data-advance="interactive" style="background:#070202;padding:3.8rem 3rem 3rem">
+  <div class="scene-inner">
+    <div class="par-cols">
+      <div class="par-col" id="col-energia" style="padding:1.4rem;gap:.8rem">
+        <div class="par-icon" style="font-size:clamp(32px,4vw,56px)">⚡</div>
+        <div class="par-col-title">Energiarendszer</div>
+        <div class="par-spec">Felelős: <strong>Fedélzeti Mérnök</strong></div>
+        <div style="font-family:var(--fm);font-size:clamp(13px,1.4vw,16px);color:var(--dim);line-height:1.6">Oldjátok meg a feladatot a használati utasítás alapján!</div>
+        <div class="par-inp-wrap" style="margin-top:auto">
+          <label class="inp-lbl">Rendszerkód:</label>
+          <div class="term-line" id="tl-energia" onclick="document.getElementById('inp-energia').focus()">
+            <span class="term-prompt">AURA></span>
+            <input id="inp-energia" class="term-inp" style="width:3ch" type="text" inputmode="numeric" maxlength="2" autocomplete="off" spellcheck="false">
+          </div>
+          <div id="fb-energia" class="fb"></div>
+        </div>
+        <div class="par-done-txt">✅ KÓD ELFOGADVA</div>
+      </div>
+      <div class="par-col" id="col-navigacio" style="padding:1.4rem;gap:.8rem">
+        <div class="par-icon" style="font-size:clamp(32px,4vw,56px)">🧭</div>
+        <div class="par-col-title">Navigáció</div>
+        <div class="par-spec">Felelős: <strong>Navigátor</strong></div>
+        <div style="font-family:var(--fm);font-size:clamp(13px,1.4vw,16px);color:var(--dim);line-height:1.6">Oldjátok meg a feladatot a használati utasítás alapján!</div>
+        <div class="par-inp-wrap" style="margin-top:auto">
+          <label class="inp-lbl">Rendszerkód:</label>
+          <div class="term-line" id="tl-navigacio" onclick="document.getElementById('inp-navigacio').focus()">
+            <span class="term-prompt">AURA></span>
+            <input id="inp-navigacio" class="term-inp" style="width:3ch" type="text" inputmode="numeric" maxlength="2" autocomplete="off" spellcheck="false">
+          </div>
+          <div id="fb-navigacio" class="fb"></div>
+        </div>
+        <div class="par-done-txt">✅ KÓD ELFOGADVA</div>
+      </div>
+      <div class="par-col" id="col-oxigen" style="padding:1.4rem;gap:.8rem">
+        <div class="par-icon" style="font-size:clamp(32px,4vw,56px)">💨</div>
+        <div class="par-col-title">Oxigénrendszer</div>
+        <div class="par-spec">Felelős: <strong>Életfenntartó Specialista</strong></div>
+        <div style="font-family:var(--fm);font-size:clamp(13px,1.4vw,16px);color:var(--dim);line-height:1.6">Oldjátok meg a feladatot a használati utasítás alapján!</div>
+        <div class="par-inp-wrap" style="margin-top:auto">
+          <label class="inp-lbl">Rendszerkód:</label>
+          <div class="term-line" id="tl-oxigen" onclick="document.getElementById('inp-oxigen').focus()">
+            <span class="term-prompt">AURA></span>
+            <input id="inp-oxigen" class="term-inp" style="width:3ch" type="text" inputmode="numeric" maxlength="2" autocomplete="off" spellcheck="false">
+          </div>
+          <div id="fb-oxigen" class="fb"></div>
+        </div>
+        <div class="par-done-txt">✅ KÓD ELFOGADVA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S13B — VÉSZHELYZET ELHÁRÍTVA (AUTO) ═ -->
+<section id="s13b" class="scene" data-advance="auto" style="background:#020a04">
+  <div class="scene-inner tc">
+    <h1 style="color:var(--green);font-size:clamp(44px,6vw,80px)">VÉSZHELYZET<br>ELHÁRÍTVA ✓</h1>
+  </div>
+</section>
+
+<!-- ══ S14 — RENDSZER-ÚJRAINDÍTÁS ══════════ -->
+<section id="s14" class="scene" data-advance="interactive" style="background:#060310">
+  <div class="scene-inner">
+    <h2 style="color:var(--purple)">Rendszer-újraindítás</h2>
+    <div class="aura-b" style="border-left-color:var(--purple);border-color:rgba(119,68,204,.25);background:var(--purple-bg)">
+      <div class="aura-lbl" style="color:var(--purple)">AURA</div>
+      <div class="aura-t" style="color:#c0a0f8">Vészhelyzet elhárítva ✓ — de a vészeljárás közben minden fedélzeti rendszer leállt.<br><br>
+        Az indításhoz a rendszereket a helyes sorrendben kell visszakapcsolni. Rossz sorrend esetén a hajtómű összeomlana.<br><br>
+        <strong>Rendszertiszt</strong> — vedd elő a technikai kézikönyvet az archívumból! Olvasd fel a csapatnak, és döntsétek el a helyes indítási sorrendet!</div>
+    </div>
+    <div class="act-row" id="act-row" style="display:none">
+      <div class="act-slot active" id="act-slot-0">
+        <div class="act-slot-icon">⚡</div>
+        <div class="act-slot-name">Energiarendszer</div>
+        <div class="act-slot-code">10 egység tényleges teljesítmény</div>
+        <div class="act-slot-sel">▼</div>
+      </div>
+      <div class="act-slot" id="act-slot-1">
+        <div class="act-slot-icon">🧭</div>
+        <div class="act-slot-name">Navigáció</div>
+        <div class="act-slot-code">21 pályaképlet-egység</div>
+        <div class="act-slot-sel">▼</div>
+      </div>
+      <div class="act-slot" id="act-slot-2">
+        <div class="act-slot-icon">💨</div>
+        <div class="act-slot-name">Oxigénrendszer</div>
+        <div class="act-slot-code">17 fennmaradó oxigénegység</div>
+        <div class="act-slot-sel">▼</div>
+      </div>
+    </div>
+    <div id="act-fb" class="fb"></div>
+  </div>
+</section>
+
+<!-- ══ S16 — START-JÓVÁHAGYÁS ════════════ -->
+<section id="s16" class="scene" data-advance="interactive" style="background:#060310">
+  <div class="scene-inner">
+    <h2 style="color:var(--purple)">Start-jóváhagyás</h2>
+    <div class="aura-b" style="border-left-color:var(--purple);border-color:rgba(119,68,204,.25);background:var(--purple-bg)">
+      <div class="aura-lbl" style="color:var(--purple)">AURA</div>
+      <div class="aura-t" style="color:#c0a0f8">Rendszer-aktiváció elfogadva ✓<br>
+        Minden rendszer aktiválva és üzemképes.<br><br>
+        Start-jóváhagyó kód szükséges a felszálláshoz.<br>
+        Add meg újra a korábbi titkosított indítási kódot!</div>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="term-line" id="tl-sa" style="border-color:rgba(119,68,204,.3)" onclick="document.getElementById('sainp').focus()">
+        <span class="term-prompt" style="color:var(--purple)">AURA></span>
+        <input id="sainp" class="term-inp" style="width:10ch;color:var(--purple);caret-color:var(--purple)" maxlength="7" autocomplete="off" spellcheck="false" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div id="sa-fb" class="fb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S17B — VISSZASZÁMLÁLÓ (AUTO) ═══════ -->
+<section id="s17b" class="scene" data-advance="auto">
+  <div class="scene-inner tc">
+    <div class="launch-lbl">VISSZASZÁMLÁLÁS · INDÍTÁSI SZEKVENCIA</div>
+    <div id="lnum">10</div>
+    <div style="font-family:var(--fm);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:.8rem" id="launch-sub">Rakétahajtóművek beindítva...</div>
+  </div>
+</section>
+
+<!-- ══ S18 — MISSZIÓ TELJESÍTVE ══════════ -->
+<section id="s18" class="scene" data-advance="click">
+  <div class="conf-layer" id="conf-layer"></div>
+  <div class="scene-inner tc">
+    <div class="title-eyebrow">BDAY-9 MISSZIÓ</div>
+    <h1 style="color:var(--gold);font-size:clamp(48px,7vw,90px)">MISSZIÓ<br>TELJESÍTVE!</h1>
+    <div class="aura-b" style="max-width:680px;margin:.9rem auto;border-left-color:var(--gold);border-color:rgba(224,184,48,.28);background:var(--gold-bg)">
+      <div class="aura-lbl" style="color:var(--gold)">AURA</div>
+      <div class="aura-t" style="color:#f8e080">GRATULÁLOK, LEGÉNYSÉG!<br><br>
+        A BDAY-9 misszió sikeresen teljesítve.<br>
+        A kőzetminta biztonságban van a raktárban.<br>
+        Visszatérés a Földre megkezdődött.<br><br>
+        Kiváló munka — mindannyian hősök vagytok! 🚀</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S19 — SZÜLETÉSNAPI KÖSZÖNTÉS ══════ -->
+<section id="s19" class="scene" data-advance="click" style="background:#0a0800">
+  <div class="conf-layer" id="conf-layer-2"></div>
+  <div class="scene-inner tc" style="position:relative;z-index:1">
+    <div class="aura-b" style="max-width:680px;margin:.9rem auto;border-left-color:var(--gold);border-color:rgba(224,184,48,.28);background:var(--gold-bg)">
+      <div class="aura-lbl" style="color:var(--gold)">AURA</div>
+      <div class="aura-t" style="color:#f8e080">Boldog születésnapot, <strong>Maja</strong>!<br><br>
+        Egyébként... az expedíció során begyűjtött kőzetminták még mindig az elzárt raktárban vannak. Senki sem vizsgálta meg őket.<br><br>
+        Azt mondják, ami a Marsról érkezett, az egészen különleges lehet... 🪨✨</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ F1 HELP MODAL ════════════════════════════ -->
+<div id="f1-modal" class="f1-overlay">
+  <div class="f1-box">
+    <div class="f1-hdr">
+      <span class="f1-ttl">Segítség</span>
+      <kbd class="f1-esc-key">ESC</kbd>
+    </div>
+    <div class="f1-body" id="f1-body"></div>
+  </div>
+</div>
+
+<!-- ══ GLOBAL NAV HINT ══════════════════════ -->
+<div id="nav-hint">
+  <span><span class="k">←</span> Vissza</span>
+  <span id="nh-fwd"><span class="k">Space</span>/<span class="k">→</span> Tovább</span>
+</div>
+
+<script>
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+const TYPEWRITER_SPEED = 24; // ms per char
+
+const PEOPLE = ['Janka','Gréti','Domi','Maja','Kinga','Frici','Lola'];
+const ROLE_LIST = [
+  {key:'pilot',         name:'Pilóta'},
+  {key:'geologist',     name:'Főgeológus'},
+  {key:'comms',         name:'Komm. Tiszt'},
+  {key:'lifeSupport',   name:'Életfenntartó'},
+  {key:'engineer',      name:'Fedélzeti Mérnök'},
+  {key:'navigator',     name:'Navigátor'},
+  {key:'systemsOfficer',name:'Rendszertiszt'},
+];
+
+const SCENE_ORDER = ['s01','s01b','s02','s03','s04','s05','s06','s07a','s07b','s07c','s08',
+  's09','s10','s11','s12','s13','s13b','s14','s16','s17b','s18','s19'];
+
+// ── AUDIO MAP ─────────────────────────────────────────────────────────────────
+// Maps scene id → array of MP3 paths (played sequentially within the scene).
+// Add one entry per scene as audio files are generated.
+const SCENE_AUDIO = {
+  's01b': ['assets/voice/S01B.mp3'],
+  's02': ['assets/voice/S02.mp3'],
+  's04': ['assets/voice/S04.mp3'],
+  's05': ['assets/voice/S05.mp3'],
+  's06': ['assets/voice/S06.mp3'],
+  's07a': ['assets/voice/S07A.mp3'],
+  's07c': ['assets/voice/S07C.mp3'],
+  's08': ['assets/voice/S08.mp3'],
+  's09': ['assets/voice/S09.mp3'],
+  's10': ['assets/voice/S10.mp3'],
+  's12': ['assets/voice/S12.mp3'],
+  's14': ['assets/voice/S14.mp3'],
+  's16': ['assets/voice/S16.mp3'],
+  's17b': ['assets/voice/S17B.mp3'],
+  's18': ['assets/voice/S18.mp3'],
+  's19': ['assets/voice/S19.mp3'],
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let currentId  = 's01';
+let isTyping   = false;
+let typeTimer  = null;
+let onTypeDone        = null;
+let s07ready              = false;
+let landingDone           = false;
+let startAuthDone         = false;
+let landingFeedbackActive = false;
+let landingPauseTimer     = null;
+let cancelFbType          = null;
+let landingTypeSkip       = null;
+let launchTick            = null;
+let launchEndTimer        = null;
+
+let currentAudio = null;
+let audioQueue   = [];
+
+function stopCurrentAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
+  audioQueue = [];
+}
+
+function playNextAudioInQueue() {
+  if (!audioQueue.length) return;
+  const audio = audioQueue.shift();
+  currentAudio = audio;
+  audio.onended = () => { currentAudio = null; playNextAudioInQueue(); };
+  audio.play().catch(() => {});
+}
+
+function countVisibleChars(sceneEl) {
+  let n = 0;
+  sceneEl.querySelectorAll('.aura-t[data-full]').forEach(el => {
+    n += el.dataset.full.replace(/<[^>]+>/g, '').length;
+  });
+  return n;
+}
+
+function playSceneAudio(id) {
+  const files = SCENE_AUDIO[id];
+  if (!files?.length) return;
+
+  const sceneEl = document.getElementById(id);
+  const audios  = files.map(src => new Audio(src));
+  let loaded = 0, totalDuration = 0;
+
+  function onReady() {
+    if (id !== currentId) return;
+    const chars = countVisibleChars(sceneEl);
+    const speed = chars > 0
+      ? Math.max(8, Math.min(60, (totalDuration * 1000) / chars))
+      : TYPEWRITER_SPEED;
+    startSceneTypewriters(sceneEl, speed);
+    audioQueue   = audios.slice(1);
+    currentAudio = audios[0];
+    audios[0].onended = () => { currentAudio = null; playNextAudioInQueue(); };
+    audios[0].play().catch(() => {});
+  }
+
+  audios.forEach(audio => {
+    audio.preload = 'metadata';
+    audio.addEventListener('loadedmetadata', () => {
+      totalDuration += isFinite(audio.duration) ? audio.duration : 0;
+      if (++loaded === audios.length) onReady();
+    }, { once: true });
+    audio.addEventListener('error', () => {
+      if (++loaded === audios.length) {
+        if (id === currentId) startSceneTypewriters(sceneEl, TYPEWRITER_SPEED);
+      }
+    }, { once: true });
+  });
+}
+
+let roles = {pilot:null,geologist:null,comms:null,lifeSupport:null,engineer:null,navigator:null,systemsOfficer:null};
+const rassState = {selIdx:0, assignments:Array(7).fill(null)};
+
+const parSolved = {energia:false, navigacio:false, oxigen:false};
+let cdTimer = null;
+let cdSecs  = 300;
+
+// ── TERRAIN ───────────────────────────────────────────────────────────────────
+const TERRAIN = {
+  // Sor 1 (alul) — homok bal, szikla jobb
+  a1:'sand', b1:'sand', c1:'sand', d1:'rock',   e1:'rock',   f1:'rock',   g1:'rock',  h1:'rock',
+  // Sor 2 — homok bal, vihar középen, szikla jobb
+  a2:'sand', b2:'sand', c2:'sand', d2:'rock',   e2:'storm',  f2:'rock',   g2:'rock',  h2:'rock',
+  // Sor 3 — homok bal, szikla középen, g3 = SÍK (a megoldás)
+  a3:'sand', b3:'sand', c3:'sand', d3:'rock',   e3:'rock',   f3:'rock',   g3:'flat',  h3:'rock',
+  // Sor 4 — homokdűnék bal, két kráter középen
+  a4:'sand', b4:'sand', c4:'rock', d4:'crater', e4:'crater', f4:'rock',   g4:'rock',  h4:'rock',
+  // Sor 5 — homok bal, szikla, vihar
+  a5:'sand', b5:'sand', c5:'rock', d5:'rock',   e5:'storm',  f5:'storm',  g5:'rock',  h5:'rock',
+  // Sor 6 — homok bal, homokhivár b6/e6, kis kráter f6
+  a6:'sand', b6:'storm', c6:'rock', d6:'rock',  e6:'storm',  f6:'crater', g6:'rock',  h6:'rock',
+  // Sor 7 — szikla, vihar
+  a7:'sand', b7:'rock', c7:'rock', d7:'rock',   e7:'storm',  f7:'rock',   g7:'rock',  h7:'rock',
+  // Sor 8 (fent) — sziklás, homokhivár g8/h8
+  a8:'rock', b8:'rock', c8:'rock', d8:'rock',   e8:'rock',   f8:'rock',   g8:'storm', h8:'storm',
+};
+const DANGER = new Set(['g2', 'h3', 'g4']);
+
+// ── F1 HELP DATA ──────────────────────────────────────────────────────────────
+const F1_HELP = {
+  's12': {
+    hint: 'Három párhuzamos feladatot kell megoldani mielőtt a visszaszámlálás lejár. A legénység dönt: 3 csapatba válnak (Életfenntartó + 1-2 fő, Fedélzeti Mérnök + 1-2 fő, Navigátor + 1-2 fő), vagy mindenki együtt oldja meg sorban. Mindhárom szerepkör vegye elő a saját használati utasítását az archívumból (fizikailag: megjelölt boríték).'
+  },
+  's13': {
+    hint: 'Mindenki nyissa ki a saját borítékját. Alább a borítékok tartalma — a kódok ellenőrzéséhez nyomd meg a Megoldás mutatása gombot.',
+    envelope: `<div style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:.8rem 1rem;margin-bottom:.6rem">
+<strong style="font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sub)">⚡ Fedélzeti Mérnök borítéka</strong>
+<div style="font-size:13px;line-height:1.85;margin-top:.5rem;color:var(--text)">
+<em style="color:var(--sub);font-size:12px">Energiarendszer Teljesítménymérleg</em><br>
+Számítsátok ki a rendszer tényleges teljesítményét: először az elméleti maximumot, majd vonjátok le a sérülések miatti veszteséget!<br><br>
+<strong>Névleges teljesítmény:</strong> 3 generátor × 6 egység = ___<br>
+<strong>Sérülési veszteség:</strong> 2 sérülés × 4 egység = ___<br>
+<strong>TÉNYLEGES:</strong> ___ − ___ = <span class="fill-blank"></span><br><br>
+<em style="color:var(--amber)">A rendszer-ellenőrző kód = a tényleges teljesítmény!</em>
+</div>
+</div>
+<div style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:.8rem 1rem;margin-bottom:.6rem">
+<strong style="font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sub)">💨 Életfenntartó borítéka</strong>
+<div style="font-size:13px;line-height:1.85;margin-top:.5rem;color:var(--text)">
+<em style="color:var(--sub);font-size:12px">Oxigénrendszer Ellenőrzés</em><br>
+Az oxigénrendszer <strong>5 kis</strong> és <strong>3 nagy</strong> tartályból áll. A leszállás során <strong>2 kis</strong> és <strong>1 nagy</strong> tartály megsérült és kiürült. Mennyi oxigén maradt?<br><br>
+<strong>Ép kis tartályok</strong> (1 kis tartály = 3 egység): 5 − 2 = ___ ép tartály → ___ × 3 = ___<br>
+<strong>Ép nagy tartályok</strong> (1 nagy tartály = 4 egység): 3 − 1 = ___ ép tartály → ___ × 4 = ___<br>
+<strong>ÖSSZESEN:</strong> ___ + ___ = <span class="fill-blank"></span><br><br>
+<em style="color:var(--amber)">A rendszer-ellenőrző kód = az összeg!</em>
+</div>
+</div>
+<div style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:.8rem 1rem">
+<strong style="font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sub)">🧭 Navigátor borítéka</strong>
+<div style="font-size:13px;line-height:1.85;margin-top:.5rem;color:var(--text)">
+<em style="color:var(--sub);font-size:12px">Bolygószimbólum-kulcs kártya + sérült navigációs kijelző</em><br>
+<strong>Bolygóértékek:</strong> ♂ Mars=7 · ♀ Vénusz=3 · ☿ Merkúr=5 · ♃ Jupiter=2 · ♄ Szaturnusz=6 · ♅ Uránusz=4 · ♆ Neptunusz=8 · ⊕ Föld=1<br><br>
+<strong>Pályaképlet:</strong> <span style="font-family:var(--fm);font-size:1.2em;letter-spacing:.1em">♀ × ☿ + ♄</span><br><br>
+1. lépés: ♀ × ☿ = ___<br>
+2. lépés: ___ + ♄ = <span class="fill-blank"></span>
+</div>
+</div>`,
+    solution: `<span style="font-size:13px;line-height:2.2;letter-spacing:normal;display:block">
+⚡ <strong>Energia:</strong> 3 × 6 = 18 · 2 × 4 = 8 · 18 − 8 = <strong style="font-size:18px">10</strong><br>
+💨 <strong>Oxigén:</strong> 5−2=3 · 3×3=9 + 3−1=2 · 2×4=8 · 9+8 = <strong style="font-size:18px">17</strong><br>
+🧭 <strong>Navigáció:</strong> Vénusz=3 · Merkúr=5 · Szaturnusz=6 · 3×5=15 · 15+6 = <strong style="font-size:18px">21</strong>
+</span>`
+  },
+  's05': {
+    hint: 'Keress sík, egyenletes felszínű területet a térképen — kerüld a krátereket, sziklás részeket és a homokos dűnéket. Melyik koordináta néz ki valóban leszállásra alkalmasnak?',
+    solution: 'g3'
+  },
+  's14': {
+    hint: 'Rendszertiszt kinyitja a technikai kézikönyvet (archívumból), hangosan felolvassa az egész csapatnak. A csapat közösen fejti meg a sorrendet. Majd Rendszertiszt begyűjti a kódokat: "Életfenntartó csapata, mi a kód?" → 17 · "Fedélzeti mérnök csapata?" → 10 · "Navigátor csapata?" → 21.',
+    envelope: `<strong style="font-family:var(--fm);font-size:12px;letter-spacing:.1em">AURA TECHNIKAI KÉZIKÖNYV — BIZALMAS · Rendszertiszt</strong><div style="font-family:var(--fm);font-size:14px;line-height:1.9;margin-top:.6rem;color:var(--text)">Az <strong>Energia-kamra</strong> hajtóenergiáját az <strong>Oxigén-tartályokból</strong> égeti el. Ha nincs aktív oxigénellátás, az Energia-kamra nem tud elindulni.<br><br>A <strong>Navigációs számítógép</strong> a visszatérési pályához folyamatos elektromos áramot igényel. Ezt kizárólag az <strong>Energia-rendszer</strong> biztosítja.<br><br><span style="color:var(--orange)">A rendszereket <strong>rossz sorrendben</strong> aktiválva az egész hajtómű összeomlana, és az űrhajó nem tér vissza.</span></div>`,
+    solution: '17 → 10 → 21 (Oxigén elsőnek, Energia másodiknak, Navigáció harmadiknak)'
+  },
+  's09': {
+    hint: 'A Kommunikációs Tiszt vegye elő a kódtáblát az archívumból (a megjelölt borítékból). A képernyőn látható 7 szimbólum mindegyike egy betűt jelöl — a kódtábla megmutatja, melyik szimbólum melyik betű. A megfejtett szó 7 betűs.',
+    envelope: '<strong style="font-family:var(--fm);letter-spacing:.1em;font-size:12px">GALAKTIKUS KÓDTÁBLA</strong><div style="display:grid;grid-template-columns:1fr 1fr;gap:.15rem .5rem;margin-top:.6rem;font-family:var(--fm);font-size:15px;line-height:1.9;color:var(--text)">◇ = A<span>★ = Á</span>△ = B<span>◆ = D</span>□ = E<span>✦ = F</span>✿ = G<span>▲ = I</span>❖ = K<span>■ = L</span>☆ = M<span>▼ = N</span>⊕ = O<span>◉ = R</span>✚ = S<span>⊗ = T</span>○ = U<span>✧ = V</span>⬡ = Z<span>⊙ = Zs</span></div>',
+    solution: 'INDULÁS'
+  },
+  's07a': {
+    hint: 'A Főgeológus a Botley robotot a kőzetmintavételi helyhez navigálja fizikailag. Az egész csapat segíthet: diktálják az utasításokat (előre, balra, jobbra, hátra stb.). Amikor a robot megérkezik és a mintavétel megtörtént, nyomj ENTER-t a folytatáshoz.',
+  },
+  's07c': {
+    hint: 'A Főgeológus bekötött szemmel (vagy háttal) programozza vissza a Botleyt — kizárólag a csapat szóbeli utasításai alapján. A csapat látja a robotot és diktálja: „előre kettőt, jobbra egyet" stb. A Főgeológus nem nézhet — csak hallgat és végrehajt.',
+  }
+};
+
+// ── TYPEWRITER ────────────────────────────────────────────────────────────────
+function initTypewriters() {
+  document.querySelectorAll('.aura-t').forEach(el => {
+    el.dataset.full = el.innerHTML;
+    el.innerHTML = '';
+  });
+}
+
+function startSceneTypewriters(sceneEl, speed = TYPEWRITER_SPEED) {
+  const els = [...sceneEl.querySelectorAll('.aura-t[data-full]')];
+  if (!els.length) return;
+  let elIdx = 0;
+
+  function typeEl(el) {
+    const full = el.dataset.full;
+    el.innerHTML = '';
+    isTyping = true;
+    let i = 0;
+    function step() {
+      if (i >= full.length) {
+        el.innerHTML = full;
+        elIdx++;
+        if (elIdx < els.length) setTimeout(() => typeEl(els[elIdx]), 180);
+        else { isTyping = false; if (onTypeDone) { onTypeDone(); onTypeDone = null; } }
+        return;
+      }
+      if (full[i] === '<') {
+        const end = full.indexOf('>', i);
+        i = (end !== -1) ? end + 1 : i + 1;
+        el.innerHTML = full.substring(0, i);
+        typeTimer = setTimeout(step, 0);
+      } else {
+        i++;
+        el.innerHTML = full.substring(0, i);
+        typeTimer = setTimeout(step, speed);
+      }
+    }
+    step();
+  }
+  typeEl(els[0]);
+}
+
+function skipTypewriters() {
+  if (!isTyping) return;
+  clearTimeout(typeTimer);
+  const scene = document.getElementById(currentId);
+  scene?.querySelectorAll('.aura-t[data-full]').forEach(el => { el.innerHTML = el.dataset.full; });
+  isTyping = false;
+  if (onTypeDone) { onTypeDone(); onTypeDone = null; }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function goTo(id) {
+  stopCurrentAudio();
+  onTypeDone = null;
+  landingTypeSkip = null;
+  cipherTypeSkip = null;
+  if (landingPauseTimer) { clearTimeout(landingPauseTimer); landingPauseTimer = null; }
+  if (cancelFbType) { cancelFbType(); cancelFbType = null; }
+  document.getElementById(currentId)?.classList.remove('active');
+  currentId = id;
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  onEnter(id);
+}
+function nextScene() {
+  const i = SCENE_ORDER.indexOf(currentId);
+  if (i < SCENE_ORDER.length - 1) goTo(SCENE_ORDER[i + 1]);
+}
+function prevScene() {
+  const i = SCENE_ORDER.indexOf(currentId);
+  if (i > 0) goTo(SCENE_ORDER[i - 1]);
+}
+
+// ── SCENE ENTER ───────────────────────────────────────────────────────────────
+function onEnter(id) {
+  // Stop launch countdown if navigating away from s17b
+  if (id !== 's17b') {
+    if (launchTick)    { clearInterval(launchTick); launchTick = null; }
+    if (launchEndTimer){ clearTimeout(launchEndTimer); launchEndTimer = null; }
+    const numEl = document.getElementById('lnum');
+    if (numEl) { numEl.style.animation = 'none'; }
+  }
+
+  updateRoleNames();
+  const scene = document.getElementById(id);
+  const adv   = scene?.dataset.advance;
+
+  // nav hint
+  const hint  = document.getElementById('nav-hint');
+  const nhFwd = document.getElementById('nh-fwd');
+  if (adv === 'auto') {
+    hint.style.opacity = '0';
+  } else if (id === 's03') {
+    hint.style.opacity = '1';
+    nhFwd.innerHTML = '<span class="k">1–7</span> szerepkör · <span class="k">←→</span> személy · <span class="k">Del</span> töröl';
+  } else if (id === 's07a' || id === 's07c' || id === 's12') {
+    hint.style.opacity = '1';
+    nhFwd.innerHTML = '<span class="k">Space</span>/<span class="k">→</span> Tovább · <span class="k">F1</span> Segítség · <span class="k">←</span> Vissza';
+  } else if (id === 's14') {
+    hint.style.opacity = '1';
+    nhFwd.innerHTML = '<span class="k">← →</span> Kiválaszt · <span class="k">Enter</span> Megerősít · <span class="k">F1</span> Segítség';
+  } else if (adv === 'interactive') {
+    hint.style.opacity = '1';
+    const f1hint = F1_HELP[id] ? ' · <span class="k">F1</span> Segítség' : '';
+    nhFwd.innerHTML = `<span class="k">Enter</span> Ellenőrzés${f1hint} · <span class="k">←</span> Vissza`;
+  } else {
+    hint.style.opacity = '1';
+    nhFwd.innerHTML = '<span class="k">Space</span>/<span class="k">→</span> Tovább';
+  }
+
+  // typewriter (click and interactive scenes)
+  // audio scenes: playSceneAudio starts the typewriter after loading metadata
+  if (adv !== 'auto' && !SCENE_AUDIO[id]) startSceneTypewriters(scene);
+
+  // s07a / s07c: block advance until typewriter finishes
+  if (id === 's07a' || id === 's07c') {
+    s07ready = false;
+    onTypeDone = () => { s07ready = true; };
+  }
+
+  // special hooks
+  if (id === 's03') initRassUI();
+  if (id === 's05') {
+    renderGrid();
+    landingDone = false;
+    landingFeedbackActive = false;
+    landingTypeSkip = null;
+    if (landingPauseTimer) { clearTimeout(landingPauseTimer); landingPauseTimer = null; }
+    const tl   = document.getElementById('term-line');
+    const linp = document.getElementById('linp');
+    const lfb  = document.getElementById('land-fb');
+    if (tl)   { tl.classList.add('term-waiting'); tl.classList.remove('ok','err'); }
+    if (linp) { linp.value = ''; }
+    if (lfb)  { lfb.className = 'fb'; }
+    document.querySelectorAll('#lgrid .gc.lit').forEach(c => c.classList.remove('lit'));
+    onTypeDone = () => {
+      if (tl) { tl.classList.remove('term-waiting'); }
+      setTimeout(() => document.getElementById('linp')?.focus(), 40);
+    };
+  }
+  if (id === 's09') {
+    cipherDone = false;
+    const tl   = document.getElementById('cipher-tl');
+    const cinp = document.getElementById('cinp');
+    const cfb  = document.getElementById('cipher-fb');
+    if (tl)   { tl.classList.add('term-waiting'); tl.classList.remove('ok','err'); }
+    if (cinp) cinp.value = '';
+    if (cfb)  cfb.className = 'fb';
+    onTypeDone = () => {
+      if (tl) { tl.classList.remove('term-waiting'); }
+      setTimeout(() => document.getElementById('cinp')?.focus(), 40);
+    };
+  }
+  if (id === 's12')  startCountdown();
+  if (id === 's13')  setTimeout(() => document.getElementById('inp-energia')?.focus(), 80);
+  if (id === 's14') {
+    initActivation();
+    document.getElementById('act-row').style.display = 'none';
+    onTypeDone = () => { document.getElementById('act-row').style.display = 'flex'; };
+  }
+  if (id === 's16') {
+    startAuthDone = false;
+    const satl = document.getElementById('tl-sa');
+    const sainp = document.getElementById('sainp');
+    const safb  = document.getElementById('sa-fb');
+    if (satl)  { satl.classList.remove('ok','err'); }
+    if (sainp) { sainp.value = ''; }
+    if (safb)  { safb.className = 'fb'; }
+    setTimeout(() => document.getElementById('sainp')?.focus(), 80);
+  }
+  if (id === 's13b') { stopCountdown(); setTimeout(nextScene, 2200); }
+  if (id === 's17b') startLaunchCountdown();
+  if (id === 's18')  launchConfetti();
+  if (id === 's19')  launchConfetti2();
+
+  playSceneAudio(id);
+}
+
+// ── F1 HELP MODAL ─────────────────────────────────────────────────────────────
+let f1Open = false;
+
+function openF1() {
+  const help = F1_HELP[currentId];
+  if (!help) return;
+  const body = document.getElementById('f1-body');
+  let html = `<div class="f1-sect-lbl">Tipp</div><p class="f1-hint">${help.hint}</p>`;
+  if (help.envelope) {
+    html += `<div class="f1-sect-lbl" style="margin-top:1.2rem">Boríték tartalma</div><div class="f1-env">${help.envelope}</div>`;
+  }
+  if (help.solution) {
+    html += `<button class="btn btn-ghost" style="font-size:13px;margin-top:1rem;padding:.4em 1.2em" onclick="document.getElementById('f1-sol').style.display='block';this.style.display='none'">Megoldás mutatása</button>`;
+    html += `<div id="f1-sol" style="display:none;margin-top:.8rem"><div class="f1-sect-lbl">Megoldás</div><div class="f1-sol-val">${help.solution}</div></div>`;
+  }
+  body.innerHTML = html;
+  document.getElementById('f1-modal').style.display = 'flex';
+  f1Open = true;
+}
+
+function closeF1() {
+  document.getElementById('f1-modal').style.display = 'none';
+  f1Open = false;
+}
+
+// ── KEYBOARD ─────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  // F1 / ESC for help modal
+  if (e.key === 'F1') { e.preventDefault(); f1Open ? closeF1() : openF1(); return; }
+  if (e.key === 'Escape' && f1Open) { e.preventDefault(); closeF1(); return; }
+
+  const focused = document.activeElement;
+  const isInp   = ['INPUT','SELECT','TEXTAREA'].includes(focused?.tagName);
+  const scene   = document.getElementById(currentId);
+  const adv     = scene?.dataset.advance;
+
+  if (currentId === 's03') { handleRassKey(e); return; }
+
+  // s17b: ← goes back, Enter/→/Space skips countdown forward
+  if (currentId === 's17b') {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevScene(); }
+    else if (e.key === 'Enter' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextScene(); }
+    return;
+  }
+
+  if (currentId === 's14') {
+    if (isTyping) {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); skipTypewriters(); }
+    } else if (actStep < 3) {
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); actNav(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); actNav(1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); actConfirm(); }
+    }
+    return;
+  }
+
+  if (adv === 'click' && !isInp) {
+    if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'Enter') {
+      e.preventDefault();
+      if (isTyping) skipTypewriters();
+      else nextScene();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault(); prevScene();
+    }
+  }
+  if (adv === 'interactive' && !isInp) {
+    if ((e.key === ' ' || e.key === 'Enter') && isTyping) { e.preventDefault(); skipTypewriters(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevScene(); }
+  }
+  // s07a / s07c: ENTER advances only after typewriter finishes (s07ready guard prevents same-keypress leakage)
+  if ((currentId === 's07a' || currentId === 's07c') && !isInp && s07ready) {
+    if (e.key === 'Enter' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextScene(); return; }
+  }
+  // s05: skip landing feedback animation
+  if (currentId === 's05' && !isInp && !landingDone && landingTypeSkip) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); landingTypeSkip(); return; }
+  }
+  // s05: advance after successful landing with Enter or →
+  if (currentId === 's05' && landingDone) {
+    if (e.key === 'Enter' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault(); landingDone = false; nextScene(); return;
+    }
+  }
+  // s09: skip cipher success animation
+  if (currentId === 's09' && !isInp && !cipherDone && cipherTypeSkip) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cipherTypeSkip(); return; }
+  }
+  // s09: advance after successful cipher with Enter or →
+  if (currentId === 's09' && cipherDone) {
+    if (e.key === 'Enter' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault(); cipherDone = false; nextScene(); return;
+    }
+  }
+  // enter in inputs handled per-scene
+});
+
+// ── ROLE NAMES ────────────────────────────────────────────────────────────────
+function updateRoleNames() {
+  document.querySelectorAll('[data-role]').forEach(el => {
+    const r = el.dataset.role;
+    if (roles[r]) el.textContent = roles[r];
+  });
+}
+
+// ── ROLE ASSIGNMENT UI ────────────────────────────────────────────────────────
+function initRassUI() {
+  // photos
+  const photosEl = document.getElementById('rass-photos');
+  photosEl.innerHTML = '';
+  PEOPLE.forEach((name, i) => {
+    const card = document.createElement('div');
+    card.className = 'rass-card';
+    card.dataset.pidx = i;
+    card.innerHTML = `
+      <div class="rass-photo grey ph-${i}">
+        <img src="assets/images/${name} Mars.png" alt="${name}">
+      </div>
+      <div class="rass-info">
+        <div class="rass-name">${name}</div>
+        <div class="rass-role-tag" id="rtag-${i}"></div>
+      </div>`;
+    photosEl.appendChild(card);
+  });
+
+  // role list
+  renderRassRoleList();
+  renderRassCards();
+}
+
+function renderRassCards() {
+  const {selIdx, assignments} = rassState;
+  PEOPLE.forEach((_, i) => {
+    const card = document.querySelector(`[data-pidx="${i}"]`);
+    if (!card) return;
+    card.classList.toggle('sel', i === selIdx);
+    card.classList.toggle('done', assignments[i] !== null);
+    const photo = card.querySelector('.rass-photo');
+    if (photo) photo.classList.toggle('grey', assignments[i] === null);
+    const tag = document.getElementById(`rtag-${i}`);
+    if (tag) {
+      const r = ROLE_LIST.find(r => r.key === assignments[i]);
+      tag.textContent = r ? r.name : '';
+    }
+  });
+  // nav hint update
+  const allDone = rassState.assignments.every(a => a !== null);
+  document.getElementById('rass-continue').style.opacity = '0';
+  if (currentId === 's03') {
+    const nhFwd = document.getElementById('nh-fwd');
+    if (nhFwd) nhFwd.innerHTML = allDone
+      ? '<span class="k">Enter</span> Misszió megkezdése · <span class="k">Del</span> töröl'
+      : '<span class="k">1–7</span> szerepkör · <span class="k">←→</span> személy · <span class="k">Del</span> töröl';
+  }
+}
+
+function renderRassRoleList() {
+  const listEl = document.getElementById('rass-role-list');
+  listEl.innerHTML = '';
+  ROLE_LIST.forEach((role, i) => {
+    const assignedToIdx = rassState.assignments.indexOf(role.key);
+    const isTaken = assignedToIdx !== -1;
+    const btn = document.createElement('div');
+    btn.className = 'rass-role-btn' + (isTaken ? ' taken' : '');
+    btn.dataset.rolenum = i + 1;
+    const who = isTaken ? `<span class="rn-who">(${PEOPLE[assignedToIdx]})</span>` : '';
+    btn.innerHTML = `<span class="rn">${i+1}</span> ${role.name} ${who}`;
+    listEl.appendChild(btn);
+  });
+}
+
+function handleRassKey(e) {
+  const {selIdx, assignments} = rassState;
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    rassState.selIdx = Math.max(0, selIdx - 1);
+    renderRassCards(); renderRassRoleList();
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    rassState.selIdx = Math.min(6, selIdx + 1);
+    renderRassCards(); renderRassRoleList();
+  } else if (e.key === 'Backspace' || e.key === 'Delete') {
+    e.preventDefault();
+    if (rassState.assignments[selIdx] !== null) {
+      rassState.assignments[selIdx] = null;
+      renderRassCards(); renderRassRoleList();
+    }
+  } else if (e.key === 'Enter') {
+    if (rassState.assignments.every(a => a !== null)) {
+      finalizeRoles(); nextScene();
+    }
+  } else {
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= 7) {
+      e.preventDefault();
+      const targetRole = ROLE_LIST[num - 1];
+      // if already assigned to someone else, unassign them first
+      const existingIdx = assignments.indexOf(targetRole.key);
+      if (existingIdx !== -1 && existingIdx !== selIdx) {
+        rassState.assignments[existingIdx] = null;
+      }
+      rassState.assignments[selIdx] = targetRole.key;
+      // auto-advance to next unassigned
+      const nextEmpty = rassState.assignments.findIndex((a, i) => a === null && i > selIdx);
+      if (nextEmpty !== -1) rassState.selIdx = nextEmpty;
+      else {
+        // wrap around to first unassigned if any
+        const firstEmpty = rassState.assignments.findIndex(a => a === null);
+        if (firstEmpty !== -1) rassState.selIdx = firstEmpty;
+      }
+      renderRassCards(); renderRassRoleList();
+    }
+  }
+}
+
+function finalizeRoles() {
+  PEOPLE.forEach((name, i) => {
+    const roleKey = rassState.assignments[i];
+    if (roleKey) roles[roleKey] = name;
+  });
+}
+
+// ── LANDING GRID ─────────────────────────────────────────────────────────────
+function renderGrid() {
+  const cols = ['a','b','c','d','e','f','g','h'];
+  // Row labels 8→1
+  const rowLbl = document.getElementById('land-row-lbl');
+  if (rowLbl) {
+    rowLbl.innerHTML = '';
+    for (let r = 8; r >= 1; r--) {
+      rowLbl.appendChild(Object.assign(document.createElement('div'), {textContent: r}));
+    }
+  }
+  // Col labels a→h
+  const colLbl = document.getElementById('land-col-lbl');
+  if (colLbl) {
+    colLbl.innerHTML = '';
+    cols.forEach(c => colLbl.appendChild(Object.assign(document.createElement('div'), {textContent: c})));
+  }
+  // 8×8 transparent overlay cells
+  const grid = document.getElementById('lgrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (let r = 8; r >= 1; r--) {
+    cols.forEach(c => {
+      const key = c + r;
+      const cell = document.createElement('div');
+      cell.className = 'gc';
+      cell.dataset.coord = key;
+      cell.addEventListener('click', () => {
+        highlightCell(key);
+        const inp = document.getElementById('linp');
+        if (inp) { inp.value = key; inp.focus(); }
+      });
+      grid.appendChild(cell);
+    });
+  }
+  const inp      = document.getElementById('linp');
+  const termLine = document.getElementById('term-line');
+  const lfb      = document.getElementById('land-fb');
+  inp?.addEventListener('input', () => highlightCell(inp.value.trim().toLowerCase()));
+  inp?.addEventListener('keydown', e => {
+    // Clear input on first keypress after a wrong answer
+    if (termLine?.classList.contains('err') && e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      inp.value = '';
+      termLine.classList.remove('err');
+      if (lfb) lfb.className = 'fb';
+    }
+    if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); checkLanding(); }
+  });
+}
+
+function highlightCell(coord) {
+  document.querySelectorAll('.gc.lit').forEach(c => c.classList.remove('lit'));
+  document.querySelector(`.gc[data-coord="${coord}"]`)?.classList.add('lit');
+}
+
+function getLandingError(coord) {
+  if (!/^[a-h][1-8]$/.test(coord)) return 'Érvénytelen formátum. Pl.: b4';
+  if (DANGER.has(coord)) return 'VESZÉLYZÓNA! Leszállás nem engedélyezett.';
+  const t = TERRAIN[coord];
+  if (t === 'crater') return 'Kráter észlelve. A leszállógép megsérülne.';
+  if (t === 'rock')   return 'Sziklás terep. A leszállógép sérülne.';
+  if (t === 'storm')  return 'Homokhivár érzékelve! A leszállógép meghibásodna.';
+  if (t === 'sand')   return 'Instabil homokos talaj. A leszállógép elsüllyedne.';
+  return null;
+}
+
+function typeHtml(el, html, onDone, speed = TYPEWRITER_SPEED) {
+  el.innerHTML = '';
+  let cancelled = false;
+  let i = 0;
+  (function step() {
+    if (cancelled) return;
+    if (i >= html.length) { el.innerHTML = html; if (onDone) onDone(); return; }
+    if (html[i] === '<') {
+      const end = html.indexOf('>', i);
+      i = (end !== -1) ? end + 1 : i + 1;
+      el.innerHTML = html.substring(0, i);
+      setTimeout(step, 0);
+    } else {
+      i++;
+      el.innerHTML = html.substring(0, i);
+      setTimeout(step, speed);
+    }
+  })();
+  return () => { cancelled = true; };
+}
+
+function playFeedbackAudio(src, totalChars, pauseMs, sceneId, onReady) {
+  stopCurrentAudio();
+  const audio = new Audio(src);
+  audio.preload = 'metadata';
+  audio.addEventListener('loadedmetadata', () => {
+    if (currentId !== sceneId) return;
+    const dur = isFinite(audio.duration) ? audio.duration * 1000 : 0;
+    const speed = totalChars > 0
+      ? Math.max(8, Math.min(60, (dur - (pauseMs || 0)) / totalChars))
+      : TYPEWRITER_SPEED;
+    currentAudio = audio;
+    audio.onended = () => { currentAudio = null; };
+    audio.play().catch(() => {});
+    onReady(speed);
+  }, { once: true });
+  audio.addEventListener('error', () => {
+    if (currentId === sceneId) onReady(TYPEWRITER_SPEED);
+  }, { once: true });
+}
+
+function checkLanding() {
+  const inp      = document.getElementById('linp');
+  const val      = inp.value.trim().toLowerCase();
+  const fb       = document.getElementById('land-fb');
+  const termLine = document.getElementById('term-line');
+  const err = getLandingError(val);
+  if (err) {
+    termLine?.classList.add('err'); termLine?.classList.remove('ok');
+    fb.className = 'fb show e';
+    fb.innerHTML = `<strong>AURA:</strong> ${err}`;
+    highlightCell(val);
+    landingDone = false;
+  } else {
+    termLine?.classList.add('ok'); termLine?.classList.remove('err');
+    inp.blur();
+    fb.className = 'fb';
+    if (landingFeedbackActive) return;
+    landingFeedbackActive = true;
+    landingDone = false;
+    if (cancelFbType) { cancelFbType(); cancelFbType = null; }
+    if (landingPauseTimer) { clearTimeout(landingPauseTimer); landingPauseTimer = null; }
+    const auraT = document.querySelector('#s05 .aura-t');
+    const MSG1 = 'G3 szektor — sík, veszélymentes terep.<br>Leszállás engedélyezve.';
+    const MSG2 = 'Leszállás végrehajtva. Enyhe rázkódás érzékelhető —<br>érzékelők enyhe anomáliát jeleznek. Futtatok egy diagnosztikát...<span class="cursor-blink"></span>';
+    const PAUSE_MS = 1800;
+    const totalChars = (MSG1 + MSG2).replace(/<[^>]+>/g, '').length;
+    function startLandingType(speed) {
+      function skipAll() {
+        landingTypeSkip = null;
+        landingFeedbackActive = false;
+        if (cancelFbType) { cancelFbType(); cancelFbType = null; }
+        if (landingPauseTimer) { clearTimeout(landingPauseTimer); landingPauseTimer = null; }
+        auraT.innerHTML = MSG1 + '<br><br>' + MSG2;
+        landingDone = true;
+        const nhFwd = document.getElementById('nh-fwd');
+        if (nhFwd) nhFwd.innerHTML = '<span class="k">Enter</span>/<span class="k">→</span> Tovább';
+      }
+      landingTypeSkip = skipAll;
+      let pauseSpan = null;
+      cancelFbType = typeHtml(auraT, MSG1, () => {
+        cancelFbType = null;
+        pauseSpan = document.createElement('span');
+        pauseSpan.innerHTML = '..<span class="cursor-blink"></span>';
+        auraT.appendChild(pauseSpan);
+        landingPauseTimer = setTimeout(() => {
+          landingPauseTimer = null;
+          if (pauseSpan?.parentNode) pauseSpan.parentNode.removeChild(pauseSpan);
+          pauseSpan = null;
+          const br = document.createElement('br');
+          const sp = document.createElement('span');
+          auraT.appendChild(br);
+          auraT.appendChild(sp);
+          cancelFbType = typeHtml(sp, MSG2, () => {
+            cancelFbType = null;
+            landingTypeSkip = null;
+            landingFeedbackActive = false;
+            landingDone = true;
+            const nhFwd = document.getElementById('nh-fwd');
+            if (nhFwd) nhFwd.innerHTML = '<span class="k">Enter</span>/<span class="k">→</span> Tovább';
+          }, speed);
+        }, PAUSE_MS);
+      }, speed);
+    }
+    playFeedbackAudio('assets/voice/S05B.mp3', totalChars, PAUSE_MS, 's05', startLandingType);
+  }
+}
+
+// ── CIPHER ───────────────────────────────────────────────────────────────────
+let cipherDone = false;
+let cipherTypeSkip = null;
+
+function checkCipher() {
+  if (cipherDone) return;
+  const inp   = document.getElementById('cinp');
+  const val   = inp.value.trim().toUpperCase();
+  const fb    = document.getElementById('cipher-fb');
+  const tl    = document.getElementById('cipher-tl');
+  if (val === 'INDULÁS') {
+    inp.blur();
+    tl?.classList.add('ok'); tl?.classList.remove('err');
+    const auraT = document.querySelector('#s09 .aura-t');
+    const MSG = 'Startjóváhagyási kód azonosítva. Az üzenet megfejtve!<br>Indítási parancs hitelesítve.';
+    const cipherChars = MSG.replace(/<[^>]+>/g, '').length;
+    function startCipherType(speed) {
+      function onCipherTyped() {
+        cancelFbType = null;
+        cipherTypeSkip = null;
+        cipherDone = true;
+        const nhFwd = document.getElementById('nh-fwd');
+        if (nhFwd) nhFwd.innerHTML = '<span class="k">Enter</span>/<span class="k">→</span> Tovább';
+      }
+      function skipCipher() {
+        cipherTypeSkip = null;
+        if (cancelFbType) { cancelFbType(); cancelFbType = null; }
+        if (auraT) auraT.innerHTML = MSG;
+        cipherDone = true;
+        const nhFwd = document.getElementById('nh-fwd');
+        if (nhFwd) nhFwd.innerHTML = '<span class="k">Enter</span>/<span class="k">→</span> Tovább';
+      }
+      cipherTypeSkip = skipCipher;
+      cancelFbType = typeHtml(auraT, MSG, onCipherTyped, speed);
+    }
+    playFeedbackAudio('assets/voice/S09B.mp3', cipherChars, 0, 's09', startCipherType);
+  } else {
+    tl?.classList.add('err'); tl?.classList.remove('ok');
+    fb.className = 'fb show e';
+    fb.innerHTML = '<strong>AURA:</strong> Helytelen azonosítókód. Próbálja újra!';
+    setTimeout(() => { tl?.classList.remove('err'); fb.className = 'fb'; }, 2000);
+  }
+}
+document.getElementById('cinp')?.addEventListener('keydown', e => {
+  const tl = document.getElementById('cipher-tl');
+  const fb = document.getElementById('cipher-fb');
+  if (tl?.classList.contains('err') && e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+    document.getElementById('cinp').value = '';
+    tl.classList.remove('err');
+    if (fb) fb.className = 'fb';
+  }
+  if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); checkCipher(); }
+});
+
+// ── PARALLEL MISSIONS ─────────────────────────────────────────────────────────
+const PAR_ANS = {energia:10, navigacio:21, oxigen:17};
+
+function startCountdown() {
+  cdSecs = 599;
+  Object.keys(parSolved).forEach(k => { parSolved[k] = false; });
+  ['energia','navigacio','oxigen'].forEach(k => {
+    document.getElementById(`col-${k}`)?.classList.remove('done');
+    const inp = document.getElementById(`inp-${k}`);
+    if (inp) { inp.value = ''; inp.classList.remove('ok','err'); }
+    const fb = document.getElementById(`fb-${k}`);
+    if (fb) fb.className = 'fb';
+  });
+  const bar = document.getElementById('cd-bar');
+  if (bar) bar.style.display = 'flex';
+  updateCd();
+  clearInterval(cdTimer);
+  cdTimer = setInterval(() => {
+    cdSecs--;
+    updateCd();
+    if (cdSecs <= 0) {
+      clearInterval(cdTimer);
+    }
+  }, 1000);
+}
+
+function stopCountdown() {
+  clearInterval(cdTimer);
+  const bar = document.getElementById('cd-bar');
+  if (bar) bar.style.display = 'none';
+}
+
+function updateCd() {
+  const el = document.getElementById('cd');
+  if (!el) return;
+  const s = Math.max(0, cdSecs);
+  el.textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+  el.style.color = cdSecs <= 60 ? 'var(--red)' : cdSecs <= 180 ? 'var(--gold)' : '#f08080';
+}
+
+function checkPar(key) {
+  const inp = document.getElementById(`inp-${key}`);
+  const tl  = document.getElementById(`tl-${key}`);
+  const fb  = document.getElementById(`fb-${key}`);
+  const val = parseInt(inp?.value ?? '');
+  if (val === PAR_ANS[key]) {
+    parSolved[key] = true;
+    tl?.classList.add('ok');
+    fb.className = 'fb show o'; fb.innerHTML = '✅ Kód elfogadva!';
+    document.getElementById(`col-${key}`)?.classList.add('done');
+    if (Object.values(parSolved).every(Boolean)) { stopCountdown(); setTimeout(nextScene, 1000); }
+    else { const next = ['energia','navigacio','oxigen'].find(k => !parSolved[k]); if (next) setTimeout(() => document.getElementById(`inp-${next}`)?.focus(), 150); }
+  } else {
+    tl?.classList.add('err');
+    fb.className = 'fb show e'; fb.innerHTML = '❌ Helytelen kód. Ellenőrizd a számítást!';
+    setTimeout(() => { tl?.classList.remove('err'); fb.className = 'fb'; }, 2200);
+  }
+}
+['energia','navigacio','oxigen'].forEach(k => {
+  document.getElementById(`inp-${k}`)?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); checkPar(k); } });
+});
+
+// ── ACTIVATION SELECTION ──────────────────────────────────────────────────────
+// Display order matches s13: Energia(0) | Navigáció(1) | Oxigén(2)
+// Correct activation order: Oxigén(2) → Energia(0) → Navigáció(1)
+const ACT_CORRECT = [2, 0, 1];
+let actStep  = 0; // how many have been activated (0–3)
+let actFocus = 0; // which card is highlighted (0–2)
+
+function initActivation() {
+  actStep = 0; actFocus = 0;
+  for (let i = 0; i < 3; i++) {
+    const s = document.getElementById(`act-slot-${i}`);
+    if (s) s.className = 'act-slot' + (i === 0 ? ' active' : '');
+  }
+  const fb = document.getElementById('act-fb');
+  if (fb) fb.className = 'fb';
+}
+
+function actNav(dir) {
+  if (actStep >= 3) return;
+  document.getElementById(`act-slot-${actFocus}`)?.classList.remove('active');
+  actFocus = (actFocus + dir + 3) % 3;
+  document.getElementById(`act-slot-${actFocus}`)?.classList.add('active');
+}
+
+function actConfirm() {
+  if (actStep >= 3) return;
+  const slot = document.getElementById(`act-slot-${actFocus}`);
+  if (slot?.classList.contains('locked')) return; // already activated
+  const fb = document.getElementById('act-fb');
+  if (actFocus === ACT_CORRECT[actStep]) {
+    slot?.classList.remove('active');
+    slot?.classList.add('locked');
+    actStep++;
+    if (actStep < 3) {
+      // auto-move focus to next unactivated card (keep same direction feel)
+      const nextFocus = [0,1,2].find(i => !document.getElementById(`act-slot-${i}`)?.classList.contains('locked'));
+      if (nextFocus !== undefined) { actFocus = nextFocus; document.getElementById(`act-slot-${actFocus}`)?.classList.add('active'); }
+    } else {
+      fb.className = 'fb show o'; fb.innerHTML = 'AURA: Aktiválási sorrend elfogadva — rendszerek visszakapcsolva ✓';
+      setTimeout(nextScene, 1400);
+    }
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const s = document.getElementById(`act-slot-${i}`);
+      if (!s?.classList.contains('locked')) s?.classList.add('error');
+    }
+    fb.className = 'fb show e'; fb.innerHTML = 'AURA: Rossz aktiválási sorrend — hajtómű-összeomlás elkerülve! Gondoljátok át a kézikönyv alapján, és próbáljátok újra.';
+    setTimeout(() => initActivation(), 2800);
+  }
+}
+
+// ── START AUTH ────────────────────────────────────────────────────────────────
+function checkStartAuth() {
+  if (startAuthDone) return;
+  const inp = document.getElementById('sainp');
+  const tl  = document.getElementById('tl-sa');
+  const val = inp.value.trim().toUpperCase();
+  const fb  = document.getElementById('sa-fb');
+  if (val === 'INDULÁS') {
+    startAuthDone = true;
+    tl?.classList.add('ok');
+    fb.className = 'fb show o'; fb.innerHTML = 'AURA: Start-jóváhagyás elfogadva — visszaszámlálás indul!';
+    setTimeout(nextScene, 1100);
+  } else {
+    tl?.classList.add('err');
+    fb.className = 'fb show e'; fb.innerHTML = 'AURA: Érvénytelen kód. Ellenőrizd a kártyát!';
+    setTimeout(() => { tl?.classList.remove('err'); fb.className = 'fb'; }, 2000);
+  }
+}
+document.getElementById('sainp')?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); checkStartAuth(); } });
+
+// ── LAUNCH COUNTDOWN ──────────────────────────────────────────────────────────
+function startLaunchCountdown() {
+  const numEl = document.getElementById('lnum');
+  const subEl = document.getElementById('launch-sub');
+  let n = 10;
+  numEl.textContent = n;
+  numEl.style.color = 'var(--red)';
+  const subs = ['Rakétahajtóművek beindítva...','Üzemanyag-nyomás OK...','Navigáció kalibrálva...','Felszállási pálya kész...','Utolsó rendszer-ellenőrzés...','Felszállási ablak nyílik...','Rögzítő kapcsok oldva...','Hajtóművek maximumon...','Indítás küszöbén...'];
+  const cols = ['#e02828','#cc2828','#e04820','#e06820','#d49020','#d4b020','#d4c830','#e8d040'];
+  launchTick = setInterval(() => {
+    n--;
+    if (n > 0) {
+      numEl.style.animation = 'none'; void numEl.offsetHeight;
+      numEl.style.animation = 'lpulse .8s ease-out';
+      numEl.textContent = n;
+      numEl.style.color = cols[10-n] || 'var(--gold)';
+      subEl.textContent = subs[10-n-1] || '';
+    } else {
+      clearInterval(launchTick); launchTick = null;
+      numEl.style.animation = 'none'; void numEl.offsetHeight;
+      numEl.style.animation = 'lpulse .6s ease-out';
+      numEl.textContent = 'INDÍTÁS!';
+      numEl.style.color = 'var(--gold)';
+      numEl.style.fontSize = 'clamp(52px,10vw,100px)';
+      subEl.textContent = '🚀🚀🚀';
+      launchEndTimer = setTimeout(nextScene, 2400);
+    }
+  }, 1000);
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const layer = document.getElementById('conf-layer');
+  if (!layer) return;
+  layer.innerHTML = '';
+  const cols = ['#e06820','#00cc6a','#e0b830','#7744cc','#3a7acc','#e02828','#40e080','#f0e040'];
+  for (let i = 0; i < 90; i++) {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    const size = 6 + Math.random() * 10;
+    p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${3+Math.random()*3}s;animation-delay:-${Math.random()*3}s`;
+    layer.appendChild(p);
+  }
+}
+
+function launchConfetti2() {
+  const layer = document.getElementById('conf-layer-2');
+  if (!layer) return;
+  layer.innerHTML = '';
+  const cols = ['#e0b830','#f8d040','#ffa040','#ffcc00','#e06820','#f0e080','#ffffff'];
+  for (let i = 0; i < 110; i++) {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    const size = 7 + Math.random() * 12;
+    p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${3+Math.random()*4}s;animation-delay:-${Math.random()*4}s`;
+    layer.appendChild(p);
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+initTypewriters();
+onEnter('s01');
+</script>
+</body>
+</html>
