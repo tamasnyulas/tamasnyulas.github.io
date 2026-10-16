@@ -750,7 +750,8 @@ strong{color:var(--text)}
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const TYPEWRITER_SPEED = 24; // ms per char
 
-const PEOPLE = ['Janka','Gréti','Domi','Maja','Kinga','Frici','Lola'];
+const PEOPLE    = ['Janka','Gréti','Domi','Maja','Kinga','Frici','Lola'];
+const PEOPLE_ID = ['Janka','Greti','Domi','Maja','Kinga','Frici','Lola']; // ékezet nélkül fájlnevekhez
 const ROLE_LIST = [
   {key:'pilot',         name:'Pilóta'},
   {key:'geologist',     name:'Főgeológus'},
@@ -1253,7 +1254,7 @@ function initRassUI() {
     card.dataset.pidx = i;
     card.innerHTML = `
       <div class="rass-photo grey ph-${i}">
-        <img src="assets/images/${name} Mars.png" alt="${name}">
+        <img src="assets/images/${PEOPLE_ID[i]}-Mars.png" alt="${name}">
       </div>
       <div class="rass-info">
         <div class="rass-name">${name}</div>
